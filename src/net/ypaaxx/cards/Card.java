@@ -1,6 +1,6 @@
-package net.ypaaxx.blackjack;
+package net.ypaaxx.cards;
 
-class Card {
+public class Card {
     private char suit;
     private char rank;
     private int points;

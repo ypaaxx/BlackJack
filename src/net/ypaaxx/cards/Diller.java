@@ -1,4 +1,4 @@
-package net.ypaaxx.blackjack;
+package net.ypaaxx.cards;
 
 public class Diller extends Thread{
     public Diller(String name){

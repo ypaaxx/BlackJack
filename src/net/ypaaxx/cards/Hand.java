@@ -1,15 +1,13 @@
-package net.ypaaxx.blackjack;
+package net.ypaaxx.cards;
 
 import java.util.LinkedList;
 
-class Hand implements Comparable <Hand> {
-    //private Card[] cards = new Card[10];
+public class Hand implements Comparable <Hand> {
     private LinkedList<Card> cards = new LinkedList<Card>();
     private int aces;
     private int numCard;
 
     public void add(Card card){
-        //cards[numCard++]=card;
         cards.add(card);
         numCard++;
         if (card.getRank() == 'A') aces++;
@@ -38,6 +36,11 @@ class Hand implements Comparable <Hand> {
             aces--;
         }
         return points;
+    }
+
+    public boolean isBlackJack(){
+        if(numCard == 2 & getPoints() == 21) return true;
+        return false;
     }
 
     public String toString(){

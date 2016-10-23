@@ -1,9 +1,9 @@
-package net.ypaaxx.blackjack;
+package net.ypaaxx.cards;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-class Pack {
+public class Pack {
     private ArrayList<Card> pack = new ArrayList<Card>(52);
 
     public Pack() {
