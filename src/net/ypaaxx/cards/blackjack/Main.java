@@ -1,19 +1,28 @@
 package net.ypaaxx.cards.blackjack;
 
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.*;
 
 public class Main {
 
-    private static ArrayList<BJGamer> players;
+    private static LinkedList<BJGamer> gamers;
     private static final int NUMBER_OF_PLAYER = 4;
 
     public static void main(String[] args) {
+        int num = 1;
+        gamers = new LinkedList<BJGamer>();
+        BJDiller diller = new BJDiller(gamers);
 
-        players = new ArrayList<BJGamer>(NUMBER_OF_PLAYER);
+        try (ServerSocket server = new ServerSocket(8189)){
+            while(true){
+                Socket incoming = server.accept();
+                gamers.addLast(new BJGamer("gamer"+ num++, diller, incoming));
+            }
+        }catch (Exception e){
 
-        BJDiller diller = new BJDiller(players);
-        players.add(new BJGamer("gamer1", diller));
-        players.add(new BJGamer("gamer2", diller));
+        }
+
 
     }
 }
