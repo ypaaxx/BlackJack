@@ -72,6 +72,7 @@ final class BJGamer extends Gamer {
 
         if (hand.getPoints() >= 21) {
             if (hand.isBlackJack()) out.println("BlackJack!");
+            else if(hand.getPoints() > 21) out.println("Busting");
             done = true;
         } else {
             out.println("hit/stand");
@@ -82,9 +83,6 @@ final class BJGamer extends Gamer {
                         done = true;
                         break;
                     case "hit":
-                        break;
-                    case "what":
-                        move = null;
                         break;
                     default:
                         move = null;
