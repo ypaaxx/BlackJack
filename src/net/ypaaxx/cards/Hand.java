@@ -5,12 +5,10 @@ import java.util.LinkedList;
 public class Hand implements Comparable <Hand> {
     private LinkedList<Card> cards = new LinkedList<Card>();
     private int aces;
-    private int numCard;
     private int points;
 
     public void add(Card card){
         cards.add(card);
-        numCard++;
         if (card.getRank() == 'A') aces++;
         setPoints();
     }
@@ -22,7 +20,7 @@ public class Hand implements Comparable <Hand> {
     private void setPoints(){
         points=0;
         int aces = this.aces;
-        if (numCard == 0) return;
+        if (cards.size() == 0) return;
         for (Card card: cards) {
             char rank = card.getRank();
             if (rank>'1' && rank<='9') points += Character.getNumericValue(rank);
@@ -45,13 +43,13 @@ public class Hand implements Comparable <Hand> {
     }
 
     public boolean isBlackJack(){
-        if(numCard == 2 & getPoints() == 21) return true;
+        if(cards.size() == 2 & getPoints() == 21) return true;
         return false;
     }
 
     public String toString(){
         StringBuilder str = new StringBuilder();
-        if(this.numCard == 0) return null;
+        if(cards.size() == 0) return null;
         for (Card card: cards) str.append(card);
         return str.toString();
     }
