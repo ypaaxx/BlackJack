@@ -6,21 +6,23 @@ public class Hand implements Comparable <Hand> {
     private LinkedList<Card> cards = new LinkedList<Card>();
     private int aces;
     private int numCard;
+    private int points;
 
     public void add(Card card){
         cards.add(card);
         numCard++;
         if (card.getRank() == 'A') aces++;
+        setPoints();
     }
 
     public Card getLast(){
         return cards.peekLast();
     }
 
-    public int getPoints(){
-        int points=0;
+    private void setPoints(){
+        points=0;
         int aces = this.aces;
-        if (numCard == 0) return 0;
+        if (numCard == 0) return;
         for (Card card: cards) {
             char rank = card.getRank();
             if (rank>'1' && rank<='9') points += Character.getNumericValue(rank);
@@ -35,6 +37,10 @@ public class Hand implements Comparable <Hand> {
             points -= 10;
             aces--;
         }
+        return;
+    }
+
+    public int getPoints(){
         return points;
     }
 
