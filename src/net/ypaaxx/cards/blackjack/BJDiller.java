@@ -1,5 +1,6 @@
 package net.ypaaxx.cards.blackjack;
 
+import net.ypaaxx.cards.Card;
 import net.ypaaxx.cards.Hand;
 import net.ypaaxx.cards.Pack;
 
@@ -26,16 +27,12 @@ public class BJDiller extends Thread {
         start();
     }
 
-    public List<BJGamer> getPlayers(){
+    public LinkedList<BJGamer> getPlayers(){
         return players;
     }
 
     public void setPhaser(int i){
         phaser = new Phaser(i);
-    }
-
-    public Phaser getPhaser(){
-        return phaser;
     }
 
     public void arrivePhaser(boolean await) {
@@ -73,7 +70,7 @@ public class BJDiller extends Thread {
         synchronized (players) {
             for (BJGamer player : players) {
                 synchronized (player) {
-                    player.sendText(" *" + hand.getLast());
+                    player.sendText(getName() + " hand:  *" + hand.getLast());
                     player.takeCard(pack.getRandomCard());
                     player.takeCard(pack.getRandomCard());
                     player.notify();
@@ -102,25 +99,24 @@ public class BJDiller extends Thread {
         phaser = new Phaser(players.size()+1);
 
         //Диллер открывает свою карту и наберает руку
-        for(BJGamer player:players)
-        player.sendText(getName() + ": " + hand + " (" + hand.getPoints() + ")");
         while (hand.getPoints() < 17) {
             hand.add(pack.getRandomCard());
-
-            System.out.println(getName() + ": " + hand + " (" + hand.getPoints() + ")");
+            System.out.println(getName() + " hand: " + hand + " (" + hand.getPoints() + ")");
         }
 
         //Результаты игры
+        for(BJGamer player:players)
+            player.sendText(getName() + ": " + hand + " (" + hand.getPoints() + ")");
         synchronized (players) {
             for (BJGamer player : players) {
                 synchronized (player) {
                     player.payTime(player.getHand().compareTo(hand));
                     if (player.getHand().compareTo(hand) > 0)
-                        player.sendText(getName() + ": выйграл игрок " + player.getName() + " (" + player.getBankroll() + ")");
+                        player.sendText("Win! " + " (" + player.getBankroll() + ")" + "\n");
                     else if (player.getHand().compareTo(hand) == 0)
-                        player.sendText(getName() + ": ничья с " + player.getName() + " (" + player.getBankroll() + ")");
+                        player.sendText("Equal " + " (" + player.getBankroll() + ")" + "\n");
                     else if (player.getHand().compareTo(hand) < 0)
-                        player.sendText(getName() + ": игрок проиграл " + player.getName() + " (" + player.getBankroll() + ")");
+                        player.sendText("Lose " + " (" + player.getBankroll() + ")" + "\n");
                     player.notify();
                 }
             }

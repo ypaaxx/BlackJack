@@ -1,48 +1,34 @@
 package net.ypaaxx.cards.blackjack;
 
-import net.ypaaxx.cards.Gamer;
-import net.ypaaxx.cards.Hand;
+import net.ypaaxx.cards.*;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.CyclicBarrier;
 
+final class BJGamer extends Gamer {
 
 
-class BJGamer extends Gamer {
-
-    private String move;
     private boolean done;
     private List<BJGamer> players;
     private CyclicBarrier endGame;
     private BJDiller diller;
-    private Socket socket;
-    private Scanner in;
-    private PrintWriter out;
 
-    public BJGamer(String name, BJDiller diller, Socket incoming) {
-        super(name);
 
-        try {
-            socket = incoming;
-            in = new Scanner(socket.getInputStream());
-            out = new  PrintWriter(socket.getOutputStream(), true);
-        }catch (IOException e){
-
-        }
+    BJGamer(String name, BJDiller diller, Socket incoming) {
+        super(name, incoming);
         this.diller = diller;
         endGame = diller.getEndGame();
         players = diller.getPlayers();
+        out.println("\nКарочи, у тебя в начале есть 1000 условных бабосов. Из них ты делаешь ставку\n" +
+                "hit - это взять ыйсчо карту\n" +
+                "stand - типа хватит\n" +
+                "Остальные я ещё не далал\n" +
+                "exit можно ввести только когда делаешь ставку. тоже пока просто фича\n" +
+                "Пожалуйста не нарушай ее, а то сервак упадёт :)\n");
     }
 
-    public void sendText(String str){
-        out.println(str);
-    }
-
-    public boolean isDone() {
+    boolean isDone() {
         return done;
     }
 
@@ -51,15 +37,16 @@ class BJGamer extends Gamer {
         super.exit();
         diller.arrivePhaser(false);
         players.remove(this);
-        try {
-            socket.close();
-        }catch (Exception e){
-
-        }
     }
 
-    protected boolean setBet(){
-        out.println("Cделайте ставку");
+    @Override
+    public void takeCard(Card card){
+        super.takeCard(card);
+        out.println("Your hand: " + hand + " (" + hand.getPoints() + ")");
+    }
+
+    private boolean setBet(){
+        out.println("Make bet");
 
         do {
             String strBet = in.next();
@@ -72,39 +59,34 @@ class BJGamer extends Gamer {
                     bet = new Integer(strBet);
                     if (bet <= 0 || bet > bankroll) throw new NumberFormatException();
                 } catch (Exception e) {
-                    out.println(getName() + ": ещё раз попробуй, умник");
+                    out.println(getName() + ": try again, bitch");
                     continue;
                 }
             }
         }while (bet <= 0 || bet > bankroll) ;
-        //out.println(getName() + ": ставит " + bet);
         bankroll -= bet;
         return true;
     }
 
     private void makeMove() {
-        out.println(getName() + ": " + hand + " (" + hand.getPoints() + ")");
+
         if (hand.getPoints() >= 21) {
-            if (hand.isBlackJack()) out.println( "BlackJack!");
+            if (hand.isBlackJack()) out.println("BlackJack!");
             done = true;
         } else {
-            out.println("Сделать ход hit/take ");
+            out.println("hit/stand");
+            String move;
             do {
                 switch (move = in.nextLine()) {
-                    case "hit":
-                        //out.println(getName() + ": " + move);
+                    case "stand":
                         done = true;
                         break;
-                    case "take":
-                        //out.println(getName() + ": " + move);
+                    case "hit":
                         break;
                     case "what":
-                        //out.println(getName() + ": " + move);
-                        //out.println(getName() + ": " + hand + " (" + hand.getPoints() + ")");
                         move = null;
                         break;
                     default:
-                        //out.println(getName() + ": " + move);
                         move = null;
                         break;
                 }
@@ -132,7 +114,7 @@ class BJGamer extends Gamer {
                     interrupted();
                 }
                 makeMove();
-                diller.arrivePhaser(!false);
+                diller.arrivePhaser(!done);
             }
 
 
