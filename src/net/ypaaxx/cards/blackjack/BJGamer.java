@@ -6,20 +6,36 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
+/**
+ * Класс описывает игрока в блэкджек и все его действия
+ * Игроком называется обьект этого класса, а юзером реальная персона
+ * которая подключается к серверу игры
+ */
 final class BJGamer extends Gamer {
 
-
+    /** Флаг того, что игроку больше не нужно карт */
     private boolean done;
-    private List<BJGamer> players;
-    private CyclicBarrier endGame;
+
+    /** Список остальных игроков */
+    private List<BJGamer> players;      //Нужно отказаться, ёбать всё через методы дилера
+
+    /** Барьер конца игры */
+    private CyclicBarrier endGame;      //Отказаться
+
+    /** Тот прень, что даст нам карту */
     private BJDealer dealer;
 
-
-    BJGamer(String name, BJDealer diller, Socket incoming) {
+    /** Конструктор срабатывающий при подключении юзера
+     *
+     * @param name      имя игрока
+     * @param dealer    тот парень
+     * @param incoming  сокет установленный с юзером
+     */
+    BJGamer(String name, BJDealer dealer, Socket incoming) {
         super(name, incoming);
-        this.dealer = diller;
-        endGame = diller.getEndGame();
-        players = diller.getPlayers();
+        this.dealer = dealer;
+        endGame = dealer.getEndGame();
+        players = dealer.getPlayers();
         out.println("\nКарочи, у тебя в начале есть 1000 условных бабосов. Из них ты делаешь ставку\n" +
                 "hit - это взять ыйсчо карту\n" +
                 "stand - типа хватит\n" +
@@ -28,23 +44,30 @@ final class BJGamer extends Gamer {
                 "Пожалуйста не нарушай ее, а то сервак упадёт :)\n");
     }
 
+    /** Проверка закончил ли игрок свою руку */
     boolean isDone() {
         return done;
     }
 
+    /** Выход юзера */
     @Override
     public void exit() {
         super.exit();
-        dealer.arrivePhaser(false);
-        players.remove(this);
+        dealer.arrivePhaser(false);     //Отключаемся от фазера
+        players.remove(this);           //Удаляем себя из списка играющих
     }
 
+    /** Добавляем карту к руке */
     @Override
     public void takeCard(Card card){
         super.takeCard(card);
         out.println("Your hand: " + hand + " (" + hand.getPoints() + ")");
     }
 
+    /** Юзер делает ставку, или выходит
+     *
+     * @return зачем я вообще чтото возвращаю
+     */
     private boolean setBet(){
         out.println("Make bet");
 
@@ -68,9 +91,11 @@ final class BJGamer extends Gamer {
         return true;
     }
 
+    /** Юзер делает ход */
     private void makeMove() {
 
         if (hand.getPoints() >= 21) {
+            // При наборе игроком 21 и более очка выставляется флаг завершения
             if (hand.isBlackJack()) out.println("BlackJack!");
             else if(hand.getPoints() > 21) out.println("Busting");
             done = true;
@@ -92,11 +117,13 @@ final class BJGamer extends Gamer {
         }
     }
 
+    /**
+     * Ход одной раздачи
+     */
     private void game(){
         synchronized (this) {
             //0 фаза
             //Игроки делают ставки или уходят
-            //out.println(getName() + ": start");
             hand = new Hand();
             done = false;
             if(!setBet()) return;
