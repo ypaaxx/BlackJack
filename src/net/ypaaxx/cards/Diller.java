@@ -1,7 +1,7 @@
 package net.ypaaxx.cards;
 
-public class Diller extends Thread{
-    public Diller(String name){
+class Dealer extends Thread{
+    public Dealer(String name){
         super(name);
     }
 }

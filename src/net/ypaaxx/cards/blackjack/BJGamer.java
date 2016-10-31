@@ -12,12 +12,12 @@ final class BJGamer extends Gamer {
     private boolean done;
     private List<BJGamer> players;
     private CyclicBarrier endGame;
-    private BJDiller diller;
+    private BJDealer dealer;
 
 
-    BJGamer(String name, BJDiller diller, Socket incoming) {
+    BJGamer(String name, BJDealer diller, Socket incoming) {
         super(name, incoming);
-        this.diller = diller;
+        this.dealer = diller;
         endGame = diller.getEndGame();
         players = diller.getPlayers();
         out.println("\nКарочи, у тебя в начале есть 1000 условных бабосов. Из них ты делаешь ставку\n" +
@@ -35,7 +35,7 @@ final class BJGamer extends Gamer {
     @Override
     public void exit() {
         super.exit();
-        diller.arrivePhaser(false);
+        dealer.arrivePhaser(false);
         players.remove(this);
     }
 
@@ -100,7 +100,7 @@ final class BJGamer extends Gamer {
             hand = new Hand();
             done = false;
             if(!setBet()) return;
-            diller.arrivePhaser(true);
+            dealer.arrivePhaser(true);
 
             //1 фаза
             //Состав игроков сформирован
@@ -112,11 +112,11 @@ final class BJGamer extends Gamer {
                     interrupted();
                 }
                 makeMove();
-                diller.arrivePhaser(!done);
+                dealer.arrivePhaser(!done);
             }
 
 
-            endGame = diller.getEndGame();
+            endGame = dealer.getEndGame();
             try {
                 wait();
             } catch (InterruptedException e) {
