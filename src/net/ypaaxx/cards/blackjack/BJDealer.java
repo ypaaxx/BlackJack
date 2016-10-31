@@ -19,7 +19,7 @@ class BJDealer extends Thread {
     private LinkedList<BJGamer> waiting;
 
     public BJDealer(LinkedList<BJGamer> waiting) {
-        super("diller");
+        super("dealer");
 
         this.waiting = waiting;
         players = new LinkedList<BJGamer>();
