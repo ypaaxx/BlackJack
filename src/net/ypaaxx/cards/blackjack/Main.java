@@ -10,12 +10,12 @@ public class Main {
 
     public static void main(String[] args) {
         gamers = new LinkedList<BJGamer>();
-        BJDiller diller = new BJDiller(gamers);
+        BJDealer dealer = new BJDealer(gamers);
 
         try (ServerSocket server = new ServerSocket(8189)){
             while(true){
                 Socket incoming = server.accept();
-                gamers.addLast(new BJGamer("gamer", diller, incoming));
+                gamers.addLast(new BJGamer("gamer", dealer, incoming));
                 Thread.sleep(5000);
             }
         }catch (Exception e){

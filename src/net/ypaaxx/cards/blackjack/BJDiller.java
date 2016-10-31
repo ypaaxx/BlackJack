@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Phaser;
 
-public class BJDiller extends Thread {
+class BJDealer extends Thread {
 
     private Pack pack;
     private Hand hand;
@@ -18,7 +18,7 @@ public class BJDiller extends Thread {
     private LinkedList<BJGamer> players;
     private LinkedList<BJGamer> waiting;
 
-    public BJDiller(LinkedList<BJGamer> waiting) {
+    public BJDealer(LinkedList<BJGamer> waiting) {
         super("diller");
 
         this.waiting = waiting;
