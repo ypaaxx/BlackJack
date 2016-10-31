@@ -16,7 +16,7 @@ public class Pack {
 
     private void shuffleNewPack(){
         pack.clear();
-        char suits[]={'♥', '♦', '♠', '♣'}; // hearts dimonds spades clubs
+        char suits[]={'♥', '♦', '♠', '♣'}; // hearts diamonds spades clubs
         char ranks[]={'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
         for (char suit: suits){
             for (char rank: ranks){
@@ -27,7 +27,7 @@ public class Pack {
     }
 
     private void shuffleIfNeed(){
-        if (numerOfCards() < 52/3) {
+        if (pack.size() < 52/3) {
             shuffleNewPack();
             System.out.println("Pack suffled");
         }
@@ -58,9 +58,5 @@ public class Pack {
             return card;
         }
         return null;
-    }
-
-    private int numerOfCards(){
-        return pack.size();
     }
 }

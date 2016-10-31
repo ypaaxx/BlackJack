@@ -19,9 +19,6 @@ final class BJGamer extends Gamer {
     /** Список остальных игроков */
     private List<BJGamer> players;      //Нужно отказаться, ёбать всё через методы дилера
 
-    /** Барьер конца игры */
-    private CyclicBarrier endGame;      //Отказаться
-
     /** Тот прень, что даст нам карту */
     private BJDealer dealer;
 
@@ -34,7 +31,6 @@ final class BJGamer extends Gamer {
     BJGamer(String name, BJDealer dealer, Socket incoming) {
         super(name, incoming);
         this.dealer = dealer;
-        endGame = dealer.getEndGame();
         players = dealer.getPlayers();
         out.println("\nКарочи, у тебя в начале есть 1000 условных бабосов. Из них ты делаешь ставку\n" +
                 "hit - это взять ыйсчо карту\n" +
@@ -45,7 +41,7 @@ final class BJGamer extends Gamer {
     }
 
     /** Проверка закончил ли игрок свою руку */
-    boolean isDone() {
+    public boolean isDone() {
         return done;
     }
 
@@ -83,12 +79,25 @@ final class BJGamer extends Gamer {
                     if (bet <= 0 || bet > bankroll) throw new NumberFormatException();
                 } catch (Exception e) {
                     out.println(getName() + ": try again, bitch");
-                    continue;
                 }
             }
         }while (bet <= 0 || bet > bankroll) ;
         bankroll -= bet;
         return true;
+    }
+
+    /** Расчёт по результатам игры
+     *
+     * @param isWin Положителен в случае победы
+     *              Нулевой при ничьей
+     *              Отрицательный при проигрыше
+     */
+     void payTime(int isWin){
+        if (isWin > 0) {
+            bankroll += 2*bet;
+            if (hand.isBlackJack()) bankroll += bet/2;
+        } else if (isWin == 0) bankroll += bet;
+        bet = 0;
     }
 
     /** Юзер делает ход */
@@ -142,8 +151,6 @@ final class BJGamer extends Gamer {
                 dealer.arrivePhaser(!done);
             }
 
-
-            endGame = dealer.getEndGame();
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -152,7 +159,7 @@ final class BJGamer extends Gamer {
         }
 
         try{
-            endGame.await();
+            dealer.getEndGame().await();
         }catch (Exception e){
 
         }
@@ -160,7 +167,7 @@ final class BJGamer extends Gamer {
 
     @Override
     public  void run() {
-        while (players.contains(this)) {
+        while (dealer.getPlayers().contains(this)) {
             game();
         }
     }

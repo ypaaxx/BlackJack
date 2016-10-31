@@ -5,16 +5,50 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Класс игрока как он есть
+ */
 public class Gamer extends Thread {
 
+    /** Счётчик безымянных игроков */
     private static int numGamer;
 
+    /** Средства на счету */
     protected int bankroll;
+
+    /** Рука */
     protected Hand hand;
+
+    /** Ставка */
     protected int bet;
+
+    /** Сокет соеденения юзера */
     private Socket socket;
+
+    /** Сканер комманд юзера */
     protected Scanner in;
+
+    /** поток сообщений юзеру */
     protected PrintWriter out;
+
+    /** Конструктор с именем и сокетом
+     *
+     * @param name      имя игрока
+     * @param incoming  сокет с юзером
+     */
+    public Gamer(String name, Socket incoming){
+        super(name + ++numGamer);
+        try {
+            socket = incoming;
+            incoming.setSoTimeout(30000);
+            in = new Scanner(socket.getInputStream());
+            out = new  PrintWriter(socket.getOutputStream(), true);
+        }catch (IOException e){
+
+        }
+        bankroll = 1000;
+    }
+
 
     public int getBankroll(){
         return bankroll;
@@ -34,13 +68,6 @@ public class Gamer extends Thread {
         out.println(str);
     }
 
-    public void payTime(int isWin){
-        if (isWin > 0) {
-            bankroll += 2*bet;
-            if (hand.isBlackJack()) bankroll += bet/2;
-        } else if (isWin == 0) bankroll += bet;
-    }
-
     public Hand getHand(){
         return hand;
     }
@@ -49,16 +76,6 @@ public class Gamer extends Thread {
         this.hand.add(card);
     }
 
-    public Gamer(String name, Socket incoming){
-        super(name + ++numGamer);
-        try {
-            socket = incoming;
-            in = new Scanner(socket.getInputStream());
-            out = new  PrintWriter(socket.getOutputStream(), true);
-        }catch (IOException e){
 
-        }
-        bankroll = 1000;
-    }
 
 }
