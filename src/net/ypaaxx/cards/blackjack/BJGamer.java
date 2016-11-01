@@ -3,8 +3,8 @@ package net.ypaaxx.cards.blackjack;
 import net.ypaaxx.cards.*;
 
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 
 /**
  * Класс описывает игрока в блэкджек и все его действия
@@ -15,9 +15,6 @@ final class BJGamer extends Gamer {
 
     /** Флаг того, что игроку больше не нужно карт */
     private boolean done;
-
-    /** Список остальных игроков */
-    private List<BJGamer> players;      //Нужно отказаться, ёбать всё через методы дилера
 
     /** Тот прень, что даст нам карту */
     private BJDealer dealer;
@@ -31,7 +28,6 @@ final class BJGamer extends Gamer {
     BJGamer(String name, BJDealer dealer, Socket incoming) {
         super(name, incoming);
         this.dealer = dealer;
-        players = dealer.getPlayers();
         out.println("\nКарочи, у тебя в начале есть 1000 условных бабосов. Из них ты делаешь ставку\n" +
                 "hit - это взять ыйсчо карту\n" +
                 "stand - типа хватит\n" +
@@ -49,8 +45,8 @@ final class BJGamer extends Gamer {
     @Override
     public void exit() {
         super.exit();
-        dealer.arrivePhaser(false);     //Отключаемся от фазера
-        players.remove(this);           //Удаляем себя из списка играющих
+        dealer.arrivePhaser(false);         //Отключаемся от фазера
+        dealer.getPlayers().remove(this);   //Удаляем себя из списка играющих
     }
 
     /** Добавляем карту к руке */
@@ -76,8 +72,8 @@ final class BJGamer extends Gamer {
             else {
                 try {
                     bet = new Integer(strBet);
-                    if (bet <= 0 || bet > bankroll) throw new NumberFormatException();
-                } catch (Exception e) {
+                    if ((bet <= 0) || (bet > bankroll)) throw new NumberFormatException();
+                } catch (NumberFormatException e) {
                     out.println(getName() + ": try again, bitch");
                 }
             }

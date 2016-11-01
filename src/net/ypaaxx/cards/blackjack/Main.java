@@ -15,6 +15,7 @@ public class Main {
         try (ServerSocket server = new ServerSocket(8189)){
             while(true){
                 Socket incoming = server.accept();
+                System.out.println(incoming);
                 gamers.addLast(new BJGamer("gamer", dealer, incoming));
                 Thread.sleep(5000);
             }

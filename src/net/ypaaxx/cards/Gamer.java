@@ -40,13 +40,23 @@ public class Gamer extends Thread {
         super(name + ++numGamer);
         try {
             socket = incoming;
-            incoming.setSoTimeout(30000);
             in = new Scanner(socket.getInputStream());
             out = new  PrintWriter(socket.getOutputStream(), true);
         }catch (IOException e){
-
+            exit();
         }
         bankroll = 1000;
+    }
+
+    /** Авторизация юзера по базе
+     *
+     * @param login Имя юзера в базе
+     * @param pass  Пароль
+     * @return      Успешность автризации
+     */
+    private boolean authorization(String login, String pass){
+
+        return false;
     }
 
 
