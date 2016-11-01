@@ -3,7 +3,6 @@ package net.ypaaxx.cards;
 public class Card {
     private char suit;
     private char rank;
-    private int points;
 
     public Card(char rank, char suit){
         this.rank=rank;

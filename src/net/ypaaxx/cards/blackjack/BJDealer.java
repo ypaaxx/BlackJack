@@ -114,7 +114,7 @@ class BJDealer extends Thread {
                     if (player.getHand().compareTo(hand) > 0)
                         player.sendText("Win! " + " (" + player.getBankroll() + ")" + "\n");
                     else if (player.getHand().compareTo(hand) == 0)
-                        player.sendText("Equal " + " (" + player.getBankroll() + ")" + "\n");
+                        player.sendText("Push " + " (" + player.getBankroll() + ")" + "\n");
                     else if (player.getHand().compareTo(hand) < 0)
                         player.sendText("Lose " + " (" + player.getBankroll() + ")" + "\n");
                     player.notify();

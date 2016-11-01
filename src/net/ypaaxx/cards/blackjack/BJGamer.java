@@ -3,8 +3,6 @@ package net.ypaaxx.cards.blackjack;
 import net.ypaaxx.cards.*;
 
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.List;
 
 /**
  * Класс описывает игрока в блэкджек и все его действия
@@ -61,8 +59,8 @@ final class BJGamer extends Gamer {
      * @return зачем я вообще чтото возвращаю
      */
     private boolean setBet(){
-        out.println("Make bet");
-
+        out.println("Make bet (max " + bankroll + ")");
+        //timer.schedule(new Timeout(), 5000 );
         do {
             String strBet = in.next();
             if (strBet.equals("exit")) {
@@ -78,6 +76,7 @@ final class BJGamer extends Gamer {
                 }
             }
         }while (bet <= 0 || bet > bankroll) ;
+        //timer.cancel();
         bankroll -= bet;
         return true;
     }
@@ -88,7 +87,7 @@ final class BJGamer extends Gamer {
      *              Нулевой при ничьей
      *              Отрицательный при проигрыше
      */
-     void payTime(int isWin){
+    void payTime(int isWin){
         if (isWin > 0) {
             bankroll += 2*bet;
             if (hand.isBlackJack()) bankroll += bet/2;
@@ -107,6 +106,8 @@ final class BJGamer extends Gamer {
         } else {
             out.println("hit/stand");
             String move;
+            in.reset();
+            while(!in.hasNextLine());
             do {
                 switch (move = in.nextLine()) {
                     case "stand":
@@ -127,14 +128,14 @@ final class BJGamer extends Gamer {
      */
     private void game(){
         synchronized (this) {
-            //0 фаза
+            //0 фаза:
             //Игроки делают ставки или уходят
             hand = new Hand();
             done = false;
             if(!setBet()) return;
             dealer.arrivePhaser(true);
 
-            //1 фаза
+            //1 фаза:
             //Состав игроков сформирован
             //Диллер раздает карты, пока игроки ожидают
             while (!done) {
@@ -165,6 +166,7 @@ final class BJGamer extends Gamer {
     public  void run() {
         while (dealer.getPlayers().contains(this)) {
             game();
+            if (bankroll == 0) exit();
         }
     }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Класс игрока как он есть
@@ -31,6 +33,16 @@ public class Gamer extends Thread {
     /** поток сообщений юзеру */
     protected PrintWriter out;
 
+    protected Timer timer;
+
+    /** Выход при задержке юзера */
+    public class Timeout extends TimerTask{
+        @Override
+        public void run(){
+            exit();
+        }
+    }
+
     /** Конструктор с именем и сокетом
      *
      * @param name      имя игрока
@@ -42,6 +54,7 @@ public class Gamer extends Thread {
             socket = incoming;
             in = new Scanner(socket.getInputStream());
             out = new  PrintWriter(socket.getOutputStream(), true);
+
         }catch (IOException e){
             exit();
         }

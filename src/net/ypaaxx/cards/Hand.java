@@ -57,7 +57,8 @@ public class Hand implements Comparable <Hand> {
     @Override
     public int compareTo(Hand otherHand){
         if (getPoints()>21) return -1;
-        if (otherHand.getPoints() > 21) return 1;
+        else if (otherHand.getPoints() > 21) return 1;
+        else if (isBlackJack() && !otherHand.isBlackJack()) return 1;
         return getPoints() - otherHand.getPoints();
     }
 }
