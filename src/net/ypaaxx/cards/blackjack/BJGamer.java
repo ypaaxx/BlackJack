@@ -1,8 +1,9 @@
 package net.ypaaxx.cards.blackjack;
 
 import net.ypaaxx.cards.*;
-
 import java.net.Socket;
+import java.util.NoSuchElementException;
+import java.util.Timer;
 
 /**
  * Класс описывает игрока в блэкджек и все его действия
@@ -56,13 +57,20 @@ final class BJGamer extends Gamer {
 
     /** Юзер делает ставку, или выходит
      *
-     * @return зачем я вообще чтото возвращаю
+     * @return false если выходит
      */
     private boolean setBet(){
         out.println("Make bet (max " + bankroll + ")");
-        //timer.schedule(new Timeout(), 5000 );
+        timer = new Timer();
+        timer.schedule(new Timeout(), 30000 );
         do {
-            String strBet = in.next();
+            String strBet;
+            try{
+                strBet = in.next();
+            }catch (NoSuchElementException e){
+                exit();
+                return false;
+            }
             if (strBet.equals("exit")) {
                 exit();
                 return false;
@@ -76,7 +84,7 @@ final class BJGamer extends Gamer {
                 }
             }
         }while (bet <= 0 || bet > bankroll) ;
-        //timer.cancel();
+        timer.cancel();
         bankroll -= bet;
         return true;
     }
@@ -106,10 +114,9 @@ final class BJGamer extends Gamer {
         } else {
             out.println("hit/stand");
             String move;
-            in.reset();
-            while(!in.hasNextLine());
+            move = in.nextLine();
             do {
-                switch (move = in.nextLine()) {
+                switch (move) {
                     case "stand":
                         done = true;
                         break;

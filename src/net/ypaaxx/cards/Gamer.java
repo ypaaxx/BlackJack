@@ -39,6 +39,7 @@ public class Gamer extends Thread {
     public class Timeout extends TimerTask{
         @Override
         public void run(){
+            System.out.println("Таймер!");
             exit();
         }
     }
@@ -54,7 +55,6 @@ public class Gamer extends Thread {
             socket = incoming;
             in = new Scanner(socket.getInputStream());
             out = new  PrintWriter(socket.getOutputStream(), true);
-
         }catch (IOException e){
             exit();
         }
